@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "Site",
+  "info": {
+    "singularName": "site",
+    "pluralName": "sites",
+    "displayName": "Site",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "wordpressWebsiteUrl": {
+      "type": "string"
+    },
+    "postTypes": {
+      "type": "json"
+    },
+    "taxonomies": {
+      "type": "json"
+    }
+  }
+}

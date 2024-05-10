@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cfcategorycf_category",
+  "info": {
+    "singularName": "cfcategory",
+    "pluralName": "cfcategorys",
+    "displayName": "cf_category",
+    "description": "cf_category Taxonomy"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "text"
+    },
+    "slug": {
+      "type": "text"
+    }
+  }
+}

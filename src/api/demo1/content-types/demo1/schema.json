@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "demo1",
+  "info": {
+    "singularName": "demo1",
+    "pluralName": "demo1s",
+    "displayName": "demo1",
+    "description": "demo1 Taxonomy"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "text"
+    },
+    "slug": {
+      "type": "text"
+    }
+  }
+}

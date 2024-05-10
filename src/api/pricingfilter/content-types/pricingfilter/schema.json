@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pricingfilter",
+  "info": {
+    "singularName": "pricingfilter",
+    "pluralName": "pricingfilters",
+    "displayName": "pricing_filter",
+    "description": "pricing_filter Taxonomy"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "text"
+    },
+    "slug": {
+      "type": "text"
+    }
+  }
+}

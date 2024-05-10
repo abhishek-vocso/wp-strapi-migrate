@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posttag",
+  "info": {
+    "singularName": "posttag",
+    "pluralName": "posttags",
+    "displayName": "post_tag",
+    "description": "post_tag Taxonomy"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "text"
+    },
+    "slug": {
+      "type": "text"
+    }
+  }
+}

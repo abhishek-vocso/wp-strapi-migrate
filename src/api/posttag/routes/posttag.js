@@ -1,0 +1,9 @@
+'use strict';
+
+/**
+ * posttag router
+ */
+
+const { createCoreRouter } = require('@strapi/strapi').factories;
+
+module.exports = createCoreRouter('api::posttag.posttag');
