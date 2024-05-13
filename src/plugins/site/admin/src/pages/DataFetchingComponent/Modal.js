@@ -60,9 +60,9 @@ const Modal = ({ setShowModal }) => {
   }, []);
 
   // Function to handle the click event on content type buttons
-const handleContentTypeButtonClick = (contentType) => {
-  setSelectedContentType(contentType);
-};
+  const handleContentTypeButtonClick = (contentType) => {
+    setSelectedContentType(contentType);
+  };
 
   // Function to filter fields starting with an underscore
   const filterFields = (data) => {
@@ -222,48 +222,74 @@ const handleContentTypeButtonClick = (contentType) => {
       }
       console.log("contentTypeAttributes:", contentTypeAttributes);
 
-    // Determine the content type based on which checkboxes are checked
-const contentType = (() => {
-  if (Object.keys(checkedPost || {}).length > 0) {
-    return "post";
-  } else if (Object.keys(checkedApp || {}).length > 0) {
-    return "app";
-  } else if (Object.keys(checkedPage || {}).length > 0) {
-    return "page";
-  } else if (Object.keys(checkedAgency || {}).length > 0) {
-    return "agency";
-  } else if (Object.keys(checkedAttachment || {}).length > 0) {
-    return "attachment";
-  } else if (Object.keys(checkedServices || {}).length > 0) {
-    return "services";
-  } else {
-    return null;
-  }
-})();
+      // Determine the content type based on which checkboxes are checked
+      const contentType = (() => {
+        if (Object.keys(checkedPost || {}).length > 0) {
+          return "post";
+        } else if (Object.keys(checkedApp || {}).length > 0) {
+          return "app";
+        } else if (Object.keys(checkedPage || {}).length > 0) {
+          return "page";
+        } else if (Object.keys(checkedAgency || {}).length > 0) {
+          return "agency";
+        } else if (Object.keys(checkedAttachment || {}).length > 0) {
+          return "attachment";
+        } else if (Object.keys(checkedServices || {}).length > 0) {
+          return "services";
+        } else {
+          return null;
+        }
+      })();
 
-// Use the determined content type to set appropriate names
-const collectionName = contentType;
-const singularName = contentType;
-const pluralName = contentType + "s";
-const displayName = contentType.charAt(0).toUpperCase() + contentType.slice(1);
-const description = displayName;
+      // Use the determined content type to set appropriate names
+      const collectionName = contentType;
+      const singularName = contentType;
+      const pluralName = contentType + "s";
+      const displayName =
+        contentType.charAt(0).toUpperCase() + contentType.slice(1);
+      const description = displayName;
 
+      try {
+        // Create the collection type and store the response status
+        const contentTypeResponse = await post(
+          "/content-type-builder/content-types",
+          {
+            contentType: {
+              kind: "collectionType",
+              collectionName,
+              singularName,
+              pluralName,
+              displayName,
+              description,
+              draftAndPublish: true,
+              info: {},
+              options: {},
+              pluginOptions: {},
+              attributes: contentTypeAttributes,
+            },
+          }
+        );
 
-      const { status } = await post("/content-type-builder/content-types", {
-        contentType: {
-          kind: "collectionType",
-          collectionName,
-          singularName,
-          pluralName,
-          displayName,
-          description,
-          draftAndPublish: true,
-          info: {},
-          options: {},
-          pluginOptions: {},
-          attributes: contentTypeAttributes,
-        },
-      });
+       // Extract the uid from contentTypeResponse
+  const uid = contentTypeResponse?.data?.data?.uid;
+
+  // Store the uid in localStorage
+  if (uid) {
+    localStorage.setItem("contentTypeUid", uid);
+    console.log("Stored contentType uid:", uid);
+  } 
+
+        // console.log("🎉", contentTypeResponse.data.data.uid);
+      } catch (error) {
+        console.error("Error creating content types:", error);
+        toggleNotification({
+          type: "warning",
+          message: `${error.message}`,
+        });
+      } finally {
+        setIsLoading(false);
+        unlockAppWithAutoreload();
+      }
 
       if (status === 201) {
         toggleNotification({
@@ -284,79 +310,87 @@ const description = displayName;
   };
 
   // Render the modal component
-// Render the modal component
-return (
-  <ModalLayout
-    onClose={() => setShowModal(false)}
-    labelledBy="title"
-    as="form"
-    onSubmit={handleFormSubmit}
-  >
-    <ModalHeader>
-      <Typography fontWeight="bold" textColor="neutral800" as="h2" id="title">
-        Generate Content Type
-      </Typography>
-    </ModalHeader>
-    <ModalBody>
-      {/* Render content type buttons */}
-      <div style={{ display: "flex" }}>
-        {["post", "app", "page", "agency", "attachment", "services"].map((contentType) => (
-          <Button
-            key={contentType}
-            onClick={() => handleContentTypeButtonClick(contentType)}
-            variant={contentType === selectedContentType ? "primary" : "secondary"}
-            style={{ marginRight: "10px" }}
-          >
-            {contentType.toUpperCase()}
-          </Button>
-        ))}
-      </div>
-      {/* Render selected content type */}
-      {jsonData ? (
-        <>
-          {/* Content Type Headings */}
-          <Typography variant="h3" style={{ marginBottom: "10px" }}>
-            {selectedContentType.toUpperCase()}
-          </Typography>
-          {/* Render schema checkboxes for selected content type */}
-          {Object.entries(jsonData[selectedContentType] || {}).map(([key, value]) => (
-            <div
-              key={`${selectedContentType}_${key}`}
-              style={{ marginBottom: "10px", fontSize: "25px" }}
-            >
-              <input
-                type="checkbox"
-                id={`${selectedContentType}_${key}`}
-                name={`${selectedContentType}_${key}`}
-                value={`${selectedContentType}_${key}`}
+  return (
+    <ModalLayout
+      onClose={() => setShowModal(false)}
+      labelledBy="title"
+      as="form"
+      onSubmit={handleFormSubmit}
+    >
+      <ModalHeader>
+        <Typography fontWeight="bold" textColor="neutral800" as="h2" id="title">
+          Generate Content Type
+        </Typography>
+      </ModalHeader>
+      <ModalBody>
+        {/* Render content type buttons */}
+        <div style={{ display: "flex" }}>
+          {["post", "app", "page", "agency", "attachment", "services"].map(
+            (contentType) => (
+              <Button
+                key={contentType}
+                onClick={() => handleContentTypeButtonClick(contentType)}
+                variant={
+                  contentType === selectedContentType ? "primary" : "secondary"
+                }
                 style={{ marginRight: "10px" }}
-              />
-              <label htmlFor={`${selectedContentType}_${key}`}>
-                <span style={{ minWidth: "150px", display: "inline-block" }}>
-                  {key}
-                </span>
-                <span style={{ minWidth: "100px", display: "inline-block" }}>
-                  ({typeof value})
-                </span>
-              </label>
-            </div>
-          ))}
-        </>
-      ) : (
-        <Typography>Loading...</Typography>
-      )}
-    </ModalBody>
-    <ModalFooter
-      startActions={
-        <Button onClick={() => setShowModal(false)} variant="tertiary">
-          Cancel
-        </Button>
-      }
-      endActions={<Button type="submit">Create Content Type</Button>}
-    />
-  </ModalLayout>
-);
-
+              >
+                {contentType.toUpperCase()}
+              </Button>
+            )
+          )}
+        </div>
+        {/* Render selected content type */}
+        {jsonData ? (
+          <>
+            {/* Content Type Headings */}
+            <Typography variant="h3" style={{ marginBottom: "10px" }}>
+              {selectedContentType.toUpperCase()}
+            </Typography>
+            {/* Render schema checkboxes for selected content type */}
+            {Object.entries(jsonData[selectedContentType] || {}).map(
+              ([key, value]) => (
+                <div
+                  key={`${selectedContentType}_${key}`}
+                  style={{ marginBottom: "10px", fontSize: "25px" }}
+                >
+                  <input
+                    type="checkbox"
+                    id={`${selectedContentType}_${key}`}
+                    name={`${selectedContentType}_${key}`}
+                    value={`${selectedContentType}_${key}`}
+                    style={{ marginRight: "10px" }}
+                  />
+                  <label htmlFor={`${selectedContentType}_${key}`}>
+                    <span
+                      style={{ minWidth: "150px", display: "inline-block" }}
+                    >
+                      {key}
+                    </span>
+                    <span
+                      style={{ minWidth: "100px", display: "inline-block" }}
+                    >
+                      ({typeof value})
+                    </span>
+                  </label>
+                </div>
+              )
+            )}
+          </>
+        ) : (
+          <Typography>Loading...</Typography>
+        )}
+      </ModalBody>
+      <ModalFooter
+        startActions={
+          <Button onClick={() => setShowModal(false)} variant="tertiary">
+            Cancel
+          </Button>
+        }
+        endActions={<Button type="submit">Create Content Type</Button>}
+      />
+    </ModalLayout>
+  );
 };
 
 export default Modal;
