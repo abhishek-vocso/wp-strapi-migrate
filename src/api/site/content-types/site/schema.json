@@ -15,10 +15,22 @@
     "wordpressWebsiteUrl": {
       "type": "string"
     },
-    "postTypes": {
+    "post": {
       "type": "json"
     },
-    "taxonomies": {
+    "app": {
+      "type": "json"
+    },
+    "page": {
+      "type": "json"
+    },
+    "attachment": {
+      "type": "json"
+    },
+    "agency": {
+      "type":"json"
+    },
+    "services": {
       "type": "json"
     }
   }

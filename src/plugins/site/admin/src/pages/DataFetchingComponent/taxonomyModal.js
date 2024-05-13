@@ -18,7 +18,8 @@ const TaxonomyModal = ({ setShowModal }) => {
   const [taxonomyKeys, setTaxonomyKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [taxonomyData, setTaxonomyData] = useState([]);
-  const [displayType, setDisplayType] = useState("taxonomies"); // Default to displaying taxonomies
+  const [displayType, setDisplayType] = useState("app"); // Default to displaying app
+  const [activeButton, setActiveButton] = useState("app");
 
   useEffect(() => {
     async function fetchData() {
@@ -31,19 +32,28 @@ const TaxonomyModal = ({ setShowModal }) => {
 
         // Filter out fields starting with an underscore
         const filterDataTypes = {
-          postTypes: filterFields(data?.data?.attributes?.postTypes),
-          taxonomies: filterFields(data?.data?.attributes?.taxonomies),
+          post: filterFields(data?.data?.attributes?.post),
+          app: filterFields(data?.data?.attributes?.app),
+          page: filterFields(data?.data?.attributes?.page),
+          agency: filterFields(data?.data?.attributes?.agency),
+          attachment: filterFields(data?.data?.attributes?.attachment),
+          services: filterFields(data?.data?.attributes?.services),
         };
 
-        // Merge keys from both postTypes and taxonomies
+        // Merge keys from all types
         const allKeysSet = new Set([
-          ...Object.keys(filterDataTypes.taxonomies),
-          ...Object.keys(filterDataTypes.postTypes),
+          ...Object.keys(filterDataTypes.post),
+          ...Object.keys(filterDataTypes.app),
+          ...Object.keys(filterDataTypes.page),
+          ...Object.keys(filterDataTypes.agency),
+          ...Object.keys(filterDataTypes.attachment),
+          ...Object.keys(filterDataTypes.services),
         ]);
 
         // Convert the Set back to an array
         const allKeys = [...allKeysSet];
 
+        // @ts-ignore
         setTaxonomyData(filterDataTypes);
         setTaxonomyKeys(allKeys);
       } catch (error) {
@@ -55,14 +65,14 @@ const TaxonomyModal = ({ setShowModal }) => {
   }, []);
 
   // Function to filter fields starting with an underscore
-const filterFields = (data) => {
-  if (!data) return null;
-  return Object.fromEntries(
-    Object.entries(data).filter(
-      ([key, value]) => key !== "ID" && !key.startsWith("_") && value === "taxonomy"
-    ).map(([key, value]) => [key, data[key + "_post_type"]])
-  );
-};
+  const filterFields = (data) => {
+    if (!data) return null;
+    return Object.fromEntries(
+      Object.entries(data).filter(
+        ([key, value]) => key !== "ID" && !key.startsWith("_") && value === "taxonomy"
+      ).map(([key, value]) => [key, data[key + "_post_type"]])
+    );
+  };
 
   const handleCheckboxChange = (key) => {
     setSelectedKeys((prevSelectedKeys) => {
@@ -74,13 +84,12 @@ const filterFields = (data) => {
     });
   };
 
-  const toggleDisplayType = () => {
-    setDisplayType((prevDisplayType) =>
-      prevDisplayType === "post" ? "taxonomies" : "post"
-    );
+  const toggleDisplayType = (type) => {
+    setDisplayType(type);
+    setActiveButton(type);
   };
 
-  const createTaxonomyCollectionTypes = async () => {
+  const createCollectionTypes = async () => {
     for (const key of selectedKeys) {
       const cleanKey = key.replace(/_/g, ''); 
       const collectionName = cleanKey;
@@ -89,13 +98,13 @@ const filterFields = (data) => {
       const displayName = key ;
       const description = `${key} Taxonomy`;
 
-      // Define the attributes for the taxonomy collection type
+      // Define the attributes for the collection type
       const attributes = {
         name: { type: "text" },
         slug: { type: "text" },
       };
 
-      // Create the taxonomy collection type
+      // Create the collection type
       const { status } = await post("/content-type-builder/content-types", {
         contentType: {
           kind: "collectionType",
@@ -128,20 +137,63 @@ const filterFields = (data) => {
     >
       <ModalHeader>
         <Typography fontWeight="bold" textColor="neutral800" as="h2" id="title">
-          {displayType === "post" ? "post" : "app"}
+          {/* {displayType === "app" ? "App" : "Post"} */}
         </Typography>
-        <Button variant="tertiary" onClick={toggleDisplayType}>
-          {displayType === "post" ? "Show Taxonomies" : "Show Post Types"}
-        </Button>
+        <div style={{ display: "flex" }}>
+          <Button
+            variant="tertiary"
+            onClick={() => toggleDisplayType("app")}
+            active={activeButton === "app"}
+            style={{ marginRight: "10px" }}
+          >
+            App
+          </Button>
+          <Button
+            variant="tertiary"
+            onClick={() => toggleDisplayType("post")}
+            active={activeButton === "post"}
+            style={{ marginRight: "10px" }}
+          >
+            Post
+          </Button>
+          <Button
+            variant="tertiary"
+            onClick={() => toggleDisplayType("page")}
+            active={activeButton === "page"}
+            style={{ marginRight: "10px" }}
+          >
+            Page
+          </Button>
+          <Button
+            variant="tertiary"
+            onClick={() => toggleDisplayType("agency")}
+            active={activeButton === "agency"}
+            style={{ marginRight: "10px" }}
+          >
+            Agency
+          </Button>
+          <Button
+            variant="tertiary"
+            onClick={() => toggleDisplayType("attachment")}
+            active={activeButton === "attachment"}
+            style={{ marginRight: "10px" }}
+          >
+            Attachment
+          </Button>
+          <Button
+            variant="tertiary"
+            onClick={() => toggleDisplayType("services")}
+            active={activeButton === "services"}
+            style={{ marginRight: "10px" }}
+          >
+            Services
+          </Button>
+        </div>
       </ModalHeader>
       <ModalBody>
         <ul>
           {taxonomyKeys
-            .filter((key) =>
-              displayType === "taxonomies"
-                ? key in taxonomyData.taxonomies
-                : key in taxonomyData.postTypes
-            )
+            .filter((key) => key in taxonomyData[displayType])
             .map((key, index) => (
               <li key={index}>
                 <label>
@@ -162,7 +214,7 @@ const filterFields = (data) => {
             Cancel
           </Button>
         }
-        endActions={<Button onClick={createTaxonomyCollectionTypes}>Create Collection Types</Button>}
+        endActions={<Button onClick={createCollectionTypes}>Create Collection Types</Button>}
       />
     </ModalLayout>
   );

@@ -13,8 +13,12 @@ import {
 export default function SiteModal({ setShowModal, addSite }) {
   const [url, setUrl] = useState("");
   const [isValidUrl, setIsValidUrl] = useState(true); 
-  const [postTypes, setPostTypes] = useState(null);
-  const [taxonomies, setTaxonomies] = useState(null);
+  const [post, setPost] = useState(null);
+  const [app, setApp] = useState(null);
+  const [page, setPage] = useState(null);
+  const [attachment, setAttachment] = useState(null);
+  const [agency, setAgency] = useState(null);
+  const [services, setServices] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
   const [connectionSuccessful, setConnectionSuccessful] = useState(false);
@@ -39,48 +43,120 @@ export default function SiteModal({ setShowModal, addSite }) {
     fetchExistingUrls();
   }, []);
 
-  const fetchWordPressPostTypes = async () => {
+  const fetchWordPressPost = async () => {
     const endpoint = `${url}/wp-json/custom/v1/posts/post`;
     try {
       const response = await fetch(endpoint);
       if (!response.ok) {
-        throw new Error(`Error fetching post types: ${response.statusText}`);
+        throw new Error(`Error fetching post: ${response.statusText}`);
       }
       const data = await response.json();
-      setPostTypes(data);
+      setPost(data);
       console.log("Fetched post types:", data);
       return data;
     } catch (error) {
-      console.error("Failed to fetch WordPress post types:", error);
+      console.error("Failed to fetch WordPress post :", error);
     }
   };
 
-  const fetchWordPressTaxonomies = async () => {
+  const fetchWordPressApp = async () => {
     const endpoint = `${url}/wp-json/custom/v1/posts/app`;
     try {
       const response = await fetch(endpoint);
       if (!response.ok) {
-        throw new Error(`Error fetching taxonomies: ${response.statusText}`);
+        throw new Error(`Error fetching App: ${response.statusText}`);
       }
       const data = await response.json();
-      setTaxonomies(data);
+      setApp(data);
       console.log("Fetched taxonomies:", data);
       return data;
     } catch (error) {
-      console.error("Failed to fetch WordPress taxonomies:", error);
+      console.error("Failed to fetch WordPress App:", error);
+    }
+  };
+
+  const fetchWordPressPage = async () => {
+    const endpoint = `${url}/wp-json/custom/v1/posts/page`;
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`Error fetching Page: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setPage(data);
+      console.log("Fetched page:", data);
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch WordPress Page:", error);
+    }
+  };
+
+  const fetchWordPressAttachment = async () => {
+    const endpoint = `${url}/wp-json/custom/v1/posts/attachment`;
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`Error fetching Attachment: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setAttachment(data);
+      console.log("Fetched attachment:", data);
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch WordPress Attachment:", error);
+    }
+  };
+
+  const fetchWordPressAgency = async () => {
+    const endpoint = `${url}/wp-json/custom/v1/posts/agency`;
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`Error fetching Agency: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setAgency(data);
+      console.log("Fetched taxonomies:", data);
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch WordPress App:", error);
+    }
+  };
+
+  const fetchWordPressServices = async () => {
+    const endpoint = `${url}/wp-json/custom/v1/posts/services`;
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`Error fetching Services: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setServices(data);
+      console.log("Fetched services:", data);
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch WordPress Services:", error);
     }
   };
 
   const fetchWordPressData = async () => {
     try {
-      const [fetchedPostTypes, fetchedTaxonomies] = await Promise.all([
-        fetchWordPressPostTypes(),
-        fetchWordPressTaxonomies(),
+      const [fetchedPost, fetchedApp, fetchedPage, fetchedAgency, fetchedAttachment, fetchedServices] = await Promise.all([
+        fetchWordPressPost(),
+        fetchWordPressApp(),
+        fetchWordPressPage(),
+        fetchWordPressAgency(),
+        fetchWordPressAttachment(),
+        fetchWordPressServices()
       ]);
       const transformedData = {
         wordpressWebsiteUrl: url,
-        postTypes: fetchedPostTypes,
-        taxonomies: fetchedTaxonomies,
+        post: fetchedPost,
+        app: fetchedApp,
+        page: fetchedPage,
+        agency: fetchedAgency,
+        attachment: fetchedAttachment,
+        services: fetchedServices,
         connectionSuccessful: connectionSuccessful,
         dataExtracted: dataExtracted,
       };
@@ -96,8 +172,8 @@ export default function SiteModal({ setShowModal, addSite }) {
     setIsSubmitting(true);
     setSubmissionError(null);
     try {
-      if (!transformedData.postTypes || !transformedData.taxonomies) {
-        throw new Error("Failed to fetch data. Post types or taxonomies are null.");
+      if (!transformedData.post || !transformedData.app) {
+        throw new Error("Failed to fetch data. Post, App are null.");
       }
 
       const response = await fetch("/api/sites", {

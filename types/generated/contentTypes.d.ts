@@ -362,6 +362,35 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
+export interface ApiSiteSite extends Schema.CollectionType {
+  collectionName: 'Site';
+  info: {
+    singularName: 'site';
+    pluralName: 'sites';
+    displayName: 'Site';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    wordpressWebsiteUrl: Attribute.String;
+    post: Attribute.JSON;
+    app: Attribute.JSON;
+    page: Attribute.JSON;
+    attachment: Attribute.JSON;
+    agency: Attribute.JSON;
+    services: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::site.site', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::site.site', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -788,313 +817,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiAppApp extends Schema.CollectionType {
-  collectionName: 'app';
-  info: {
-    singularName: 'app';
-    pluralName: 'apps';
-    displayName: 'App';
-    description: 'App';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    author: Attribute.Text;
-    date: Attribute.Date;
-    date_gmt: Attribute.Date;
-    content: Attribute.Text;
-    title: Attribute.Text;
-    excerpt: Attribute.Text;
-    status: Attribute.Text;
-    comment_status: Attribute.Text;
-    ping_status: Attribute.Text;
-    password: Attribute.Password;
-    demo1: Attribute.Relation<'api::app.app', 'oneToOne', 'api::demo1.demo1'>;
-    pricing_filter: Attribute.Relation<
-      'api::app.app',
-      'oneToOne',
-      'api::pricingfilter.pricingfilter'
-    >;
-    cf_category: Attribute.Relation<
-      'api::app.app',
-      'oneToOne',
-      'api::cfcategory.cfcategory'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::app.app', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<'api::app.app', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
-export interface ApiCategoryCategory extends Schema.CollectionType {
-  collectionName: 'category';
-  info: {
-    singularName: 'category';
-    pluralName: 'categorys';
-    displayName: 'category';
-    description: 'category Taxonomy';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.Text;
-    slug: Attribute.Text;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::category.category',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::category.category',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiCfcategoryCfcategory extends Schema.CollectionType {
-  collectionName: 'cfcategorycf_category';
-  info: {
-    singularName: 'cfcategory';
-    pluralName: 'cfcategorys';
-    displayName: 'cf_category';
-    description: 'cf_category Taxonomy';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.Text;
-    slug: Attribute.Text;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::cfcategory.cfcategory',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::cfcategory.cfcategory',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiDemo1Demo1 extends Schema.CollectionType {
-  collectionName: 'demo1';
-  info: {
-    singularName: 'demo1';
-    pluralName: 'demo1s';
-    displayName: 'demo1';
-    description: 'demo1 Taxonomy';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.Text;
-    slug: Attribute.Text;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::demo1.demo1',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::demo1.demo1',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiPostPost extends Schema.CollectionType {
-  collectionName: 'post';
-  info: {
-    singularName: 'post';
-    pluralName: 'posts';
-    displayName: 'Post';
-    description: 'Post';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    author: Attribute.Text;
-    date: Attribute.Date;
-    date_gmt: Attribute.Date;
-    content: Attribute.Text;
-    title: Attribute.Text;
-    excerpt: Attribute.Text;
-    status: Attribute.Text;
-    comment_status: Attribute.Text;
-    ping_status: Attribute.Text;
-    password: Attribute.Password;
-    category: Attribute.Relation<
-      'api::post.post',
-      'oneToOne',
-      'api::category.category'
-    >;
-    post_format: Attribute.Relation<
-      'api::post.post',
-      'oneToOne',
-      'api::postformat.postformat'
-    >;
-    post_tag: Attribute.Relation<
-      'api::post.post',
-      'oneToOne',
-      'api::posttag.posttag'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<'api::post.post', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
-export interface ApiPostformatPostformat extends Schema.CollectionType {
-  collectionName: 'postformat';
-  info: {
-    singularName: 'postformat';
-    pluralName: 'postformats';
-    displayName: 'post_format';
-    description: 'post_format Taxonomy';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.Text;
-    slug: Attribute.Text;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::postformat.postformat',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::postformat.postformat',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiPosttagPosttag extends Schema.CollectionType {
-  collectionName: 'posttag';
-  info: {
-    singularName: 'posttag';
-    pluralName: 'posttags';
-    displayName: 'post_tag';
-    description: 'post_tag Taxonomy';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.Text;
-    slug: Attribute.Text;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::posttag.posttag',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::posttag.posttag',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiPricingfilterPricingfilter extends Schema.CollectionType {
-  collectionName: 'pricingfilter';
-  info: {
-    singularName: 'pricingfilter';
-    pluralName: 'pricingfilters';
-    displayName: 'pricing_filter';
-    description: 'pricing_filter Taxonomy';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.Text;
-    slug: Attribute.Text;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::pricingfilter.pricingfilter',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::pricingfilter.pricingfilter',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiSiteSite extends Schema.CollectionType {
-  collectionName: 'Site';
-  info: {
-    singularName: 'site';
-    pluralName: 'sites';
-    displayName: 'Site';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    wordpressWebsiteUrl: Attribute.String;
-    postTypes: Attribute.JSON;
-    taxonomies: Attribute.JSON;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::site.site', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<'api::site.site', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1105,6 +827,7 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
+      'api::site.site': ApiSiteSite;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
@@ -1113,15 +836,6 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::app.app': ApiAppApp;
-      'api::category.category': ApiCategoryCategory;
-      'api::cfcategory.cfcategory': ApiCfcategoryCfcategory;
-      'api::demo1.demo1': ApiDemo1Demo1;
-      'api::post.post': ApiPostPost;
-      'api::postformat.postformat': ApiPostformatPostformat;
-      'api::posttag.posttag': ApiPosttagPosttag;
-      'api::pricingfilter.pricingfilter': ApiPricingfilterPricingfilter;
-      'api::site.site': ApiSiteSite;
     }
   }
 }

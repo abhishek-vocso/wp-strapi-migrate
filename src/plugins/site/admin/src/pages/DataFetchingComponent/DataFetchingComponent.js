@@ -12,7 +12,7 @@ const HomePage = () => {
   const [siteData, setSiteData] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
-  const [showTaxonomyModal, setShowTaxonomyModal] = useState(false); // New state
+  const [showTaxonomyModal, setShowTaxonomyModal] = useState(false); 
   const siteId = useParams().id;
   const history = useHistory();
   const [{ query }, setQuery] = useQueryParams();
