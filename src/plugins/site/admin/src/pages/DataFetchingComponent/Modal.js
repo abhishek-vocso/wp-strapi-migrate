@@ -29,6 +29,22 @@ const Modal = ({ setShowModal }) => {
   const [selectedContentType, setSelectedContentType] = useState("post");
   const { lockAppWithAutoreload, unlockAppWithAutoreload } =
     useAutoReloadOverlayBlocker();
+    const [editedNames, setEditedNames] = useState({
+      post: "",
+      app: "",
+      page: "",
+      agency: "",
+      attachment: "",
+      services: "",
+    });
+
+    const handleNameChange = (e, contentType) => {
+      const { value } = e.target;
+      setEditedNames((prevNames) => ({
+        ...prevNames,
+        [contentType]: value,
+      }));
+    };
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -241,13 +257,17 @@ const Modal = ({ setShowModal }) => {
         }
       })();
 
-      // Use the determined content type to set appropriate names
-      const collectionName = contentType;
-      const singularName = contentType;
-      const pluralName = contentType + "s";
-      const displayName =
-        contentType.charAt(0).toUpperCase() + contentType.slice(1);
-      const description = displayName;
+// Use the determined content type to set appropriate names
+const kebabCase = (str) => str.toLowerCase().replace(/\s+/g, "-");
+
+const collectionName = kebabCase(editedNames[contentType] || contentType);
+const singularName = kebabCase(editedNames[contentType] || contentType);
+const pluralName = kebabCase(editedNames[contentType] || contentType) + "s";
+const displayName =
+  (editedNames[contentType] || contentType).charAt(0).toUpperCase() +
+  (editedNames[contentType] || contentType).slice(1);
+const description = displayName;
+
 
       try {
         // Create the collection type and store the response status
@@ -278,8 +298,6 @@ const Modal = ({ setShowModal }) => {
     localStorage.setItem("contentTypeUid", uid);
     console.log("Stored contentType uid:", uid);
   } 
-
-        // console.log("🎉", contentTypeResponse.data.data.uid);
       } catch (error) {
         console.error("Error creating content types:", error);
         toggleNotification({
@@ -323,31 +341,35 @@ const Modal = ({ setShowModal }) => {
         </Typography>
       </ModalHeader>
       <ModalBody>
-        {/* Render content type buttons */}
         <div style={{ display: "flex" }}>
           {["post", "app", "page", "agency", "attachment", "services"].map(
             (contentType) => (
-              <Button
-                key={contentType}
-                onClick={() => handleContentTypeButtonClick(contentType)}
-                variant={
-                  contentType === selectedContentType ? "primary" : "secondary"
-                }
-                style={{ marginRight: "10px" }}
-              >
-                {contentType.toUpperCase()}
-              </Button>
+              <div key={contentType} style={{ marginRight: "10px" }}>
+                <Button
+                  onClick={() => handleContentTypeButtonClick(contentType)}
+                  variant={
+                    contentType === selectedContentType ? "primary" : "secondary"
+                  }
+                >
+                  {contentType.toUpperCase()}
+                </Button>
+                {selectedContentType === contentType && (
+                  <input
+                    type="text"
+                    placeholder={`Enter ${contentType} name`}
+                    value={editedNames[contentType]}
+                    onChange={(e) => handleNameChange(e, contentType)}
+                  />
+                )}
+              </div>
             )
           )}
         </div>
-        {/* Render selected content type */}
         {jsonData ? (
           <>
-            {/* Content Type Headings */}
             <Typography variant="h3" style={{ marginBottom: "10px" }}>
               {selectedContentType.toUpperCase()}
             </Typography>
-            {/* Render schema checkboxes for selected content type */}
             {Object.entries(jsonData[selectedContentType] || {}).map(
               ([key, value]) => (
                 <div
